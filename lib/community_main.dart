@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import 'community_post.dart';
+import 'community_post_list.dart';
+
+class MainPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('공강아 덤벼라 커뮤니티'),
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.all(10),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: '전체 글 검색',
+                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.search),
+              ),
+            ),
+          ),
+          SizedBox(height: 10),
+          Expanded(
+            child: ListView(
+              children: <Widget>[
+                _buildListItem(context, '자유 게시판'),
+                Divider(),
+                _buildListItem(context, '중고 거래'),
+                Divider(),
+                _buildListItem(context, '청년 정책'),
+              ],
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          String boardType = '자유 게시판';
+          if (boardType == '자유 게시판') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostPage(boardType: '자유 게시판'),
+              ),
+            );
+          } else if (boardType == '중고거래') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostPage(boardType: '중고거래'),
+              ),
+            );
+          }
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildListItem(BuildContext context, String title) {
+    return ListTile(
+      title: Text(title),
+      onTap: () {
+        // 해당 게시판으로 이동하는 기능
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BoardPostsPage(boardName: title),
+          ),
+        );
+      },
+    );
+  }
+}

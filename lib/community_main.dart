@@ -16,7 +16,10 @@ class MainPage extends StatelessWidget {
             child: TextField(
               decoration: InputDecoration(
                 hintText: '전체 글 검색',
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                  width: 1.5,
+                )),
                 suffixIcon: Icon(Icons.search),
               ),
             ),

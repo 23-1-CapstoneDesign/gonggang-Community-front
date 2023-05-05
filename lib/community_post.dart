@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class PostPage extends StatefulWidget {
   final String boardType;
@@ -13,12 +15,25 @@ class _PostPageState extends State<PostPage> {
   String _title = '';
   String _content = '';
   String _tags = '';
+  File? _imageFile; // 선택된 이미지 파일
 
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   final _tagsController = TextEditingController();
 
   String? _selectedBoard;
+
+  // 이미지 선택 및 미리보기 처리
+  Future<void> _getImage() async {
+    final pickedFile = await ImagePicker().getImage(
+      source: ImageSource.gallery, // 갤러리에서 이미지 가져오기
+    );
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
 
   void _showBoardSelectionDialog() {
     showDialog(
@@ -134,6 +149,34 @@ class _PostPageState extends State<PostPage> {
                 });
               },
             ),
+            // 이미지 첨부 버튼
+            InkWell(
+              onTap: _getImage,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Row(
+                  children: [
+                    Icon(Icons.image),
+                    SizedBox(width: 8),
+                    Text(
+                      '이미지 ',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // 선택된 이미지 미리보기
+            if (_imageFile != null) ...[
+              SizedBox(height: 16),
+              Container(
+                height: 200,
+                child: Image.file(_imageFile!),
+              ),
+            ],
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {},

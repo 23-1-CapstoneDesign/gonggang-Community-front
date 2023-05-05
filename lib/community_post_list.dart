@@ -1,38 +1,109 @@
 import 'package:flutter/material.dart';
 import 'community_post_detail.dart';
+import 'community_post.dart';
 
-// 게시글 목록 페이지
-// 추후 데이터 베이스와 연동
-class BoardPostsPage extends StatelessWidget {
+class BoardPostsPage extends StatefulWidget {
   final String boardName;
 
   const BoardPostsPage({Key? key, required this.boardName}) : super(key: key);
 
   @override
+  _BoardPostsPageState createState() => _BoardPostsPageState();
+}
+
+// 게시글 목록 페이지
+// 추후 데이터 베이스와 연동
+class _BoardPostsPageState extends State<BoardPostsPage> {
+  final TextEditingController searchController = TextEditingController();
+  final List<String> searchResult = [];
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(boardName),
+        title: Text(widget.boardName),
       ),
-      body: ListView.builder(
-        itemCount: 10, // 임시 데이터로 10개만 보여주도록 설정
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text('게시글 ${index + 1}'),
-            subtitle: Text('게시글 ${index + 1}의 내용입니다.'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BoardPostDetailPage(
-                    boardName: boardName,
-                    postId: index + 1,
+      body: Column(
+        children: [
+          Container(
+              width: MediaQuery.of(context).size.width * 0.93,
+              child: TextField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  hintText: '검색어를 입력하세요',
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        width: 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      // 검색 버튼을 누를 때 처리할 내용
+                      final query = searchController.text;
+                      if (query.isEmpty) {
+                        // 검색어가 비어있다면 모든 게시글을 보여줍니다.
+                        searchResult.clear();
+                      } else {
+                        // 검색어가 비어있지 않다면, 게시글 제목에서 검색어를 찾습니다.
+                        searchResult.clear();
+                        for (int i = 0; i < 10; i++) {
+                          final title = '게시글 ${i + 1}';
+                          if (title.contains(query)) {
+                            searchResult.add('${i + 1}');
+                          }
+                        }
+                      }
+                      // 검색 결과를 반영합니다.
+                      setState(() {});
+                    },
+                    icon: Icon(Icons.search),
                   ),
                 ),
-              );
-            },
-          );
-        },
+              )),
+          Expanded(
+            child: ListView.builder(
+              itemCount: searchResult.isEmpty ? 10 : searchResult.length,
+              itemBuilder: (context, index) {
+                if (searchResult.isEmpty) {
+                  return ListTile(
+                    title: Text('게시글 ${index + 1}  #태그 자리'),
+                    subtitle: Text('게시글 ${index + 1}의 내용입니다.'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BoardPostDetailPage(
+                            boardName: widget.boardName,
+                            postId: index + 1,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  final postId = int.parse(searchResult[index]);
+                  return ListTile(
+                    title: Text('게시글 $postId'),
+                    subtitle: Text('게시글 $postId의 내용입니다.'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BoardPostDetailPage(
+                            boardName: widget.boardName,
+                            postId: postId,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

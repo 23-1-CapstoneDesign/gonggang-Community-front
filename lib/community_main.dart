@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'community_post.dart';
 import 'community_post_list.dart';
+import 'community_youthPolicy_page.dart';
 
 class MainPage extends StatelessWidget {
   @override
@@ -30,8 +31,6 @@ class MainPage extends StatelessWidget {
               children: <Widget>[
                 _buildListItem(context, '자유 게시판'),
                 Divider(),
-                _buildListItem(context, '중고 거래'),
-                Divider(),
                 _buildListItem(context, '청년 정책'),
               ],
             ),
@@ -48,13 +47,6 @@ class MainPage extends StatelessWidget {
                 builder: (context) => PostPage(boardType: '자유 게시판'),
               ),
             );
-          } else if (boardType == '중고거래') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PostPage(boardType: '중고거래'),
-              ),
-            );
           }
         },
         child: Icon(Icons.add),
@@ -67,12 +59,21 @@ class MainPage extends StatelessWidget {
       title: Text(title),
       onTap: () {
         // 해당 게시판으로 이동하는 기능
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BoardPostsPage(boardName: title),
-          ),
-        );
+        if (title == '청년 정책') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => YouthPolicyPage(),
+            ),
+          );
+        } else if (title == '자유 게시판') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BoardPostsPage(boardName: title),
+            ),
+          );
+        }
       },
     );
   }
